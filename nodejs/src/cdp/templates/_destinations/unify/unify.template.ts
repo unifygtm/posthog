@@ -23,14 +23,8 @@ if (event.event in ('$groupidentify', '$set', '$web_vitals')) {
 let payload := {
     'type': event.event,
     'data': event,
-    'person': {
-        'email': person.properties.email,
-        'properties': person.properties
-    },
-    'mapping': {
-        'person': inputs.person_mapping,
-        'company': inputs.company_properties
-    }
+    'person': inputs.person_attributes,
+    'company': inputs.company_attributes
 }
 
 let res := fetch('https://analytics.unifygtm.com/api/v1/webhooks/posthog', {
@@ -58,7 +52,7 @@ if (res.status >= 400) {
             required: true,
         },
         {
-            key: 'person_mapping',
+            key: 'person_attributes',
             type: 'dictionary',
             label: 'Person',
             description: 'Mapping of Unify Person attributes to PostHog person properties.',
@@ -73,13 +67,12 @@ if (res.status >= 400) {
             required: false,
         },
         {
-            key: 'company_properties',
+            key: 'company_attributes',
             type: 'dictionary',
             label: 'Company',
             description: 'Mapping of Unify Company attributes to PostHog company properties.',
             default: {
-                domain: '',
-                name: '',
+                domain: '{groups.company.properties.domain}',
             },
             secret: false,
             required: false,
