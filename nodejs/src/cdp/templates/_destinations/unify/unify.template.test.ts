@@ -14,14 +14,14 @@ describe('unify template', () => {
 
     const defaultInputs = {
         write_key: 'test-write-key',
-        person_mapping: {
+        person_attributes: {
             email: '{person.properties.email}',
             first_name: '{person.properties.first_name}',
             last_name: '{person.properties.last_name}',
             title: '{person.properties.title}',
             linkedin_url: '{person.properties.linkedin_url}',
         },
-        company_properties: {
+        company_attributes: {
             domain: '{event.properties.company_domain}',
             name: '{event.properties.company_name}',
         },
@@ -67,20 +67,14 @@ describe('unify template', () => {
         })
         expect(payload.person).toEqual({
             email: 'person@acme.com',
-            properties: { email: 'person@acme.com', role: 'admin' },
+            first_name: null,
+            last_name: null,
+            title: null,
+            linkedin_url: null,
         })
-        expect(payload.mapping).toEqual({
-            person: {
-                email: 'person@acme.com',
-                first_name: null,
-                last_name: null,
-                title: null,
-                linkedin_url: null,
-            },
-            company: {
-                domain: null,
-                name: null,
-            },
+        expect(payload.company).toEqual({
+            domain: null,
+            name: null,
         })
     })
 
@@ -110,7 +104,10 @@ describe('unify template', () => {
         })
         expect(payload.person).toEqual({
             email: 'founder@acme.com',
-            properties: { email: 'founder@acme.com', role: 'owner' },
+            first_name: null,
+            last_name: null,
+            title: null,
+            linkedin_url: null,
         })
     })
 
@@ -132,7 +129,7 @@ describe('unify template', () => {
         expect(response.finished).toBe(false)
 
         const payload = parsePayload(response)
-        expect(payload.mapping.company).toEqual({
+        expect(payload.company).toEqual({
             domain: 'acme.com',
             name: 'Acme Inc',
         })
@@ -158,25 +155,26 @@ describe('unify template', () => {
         const payload = parsePayload(response)
         expect(payload.person).toEqual({
             email: null,
-            properties: {},
+            first_name: null,
+            last_name: null,
+            title: null,
+            linkedin_url: null,
         })
     })
 
-    it('allows empty mapping dictionaries', async () => {
+    it('allows empty attribute dictionaries', async () => {
         const response = await tester.invoke({
             write_key: 'test-write-key',
-            person_mapping: {},
-            company_properties: {},
+            person_attributes: {},
+            company_attributes: {},
         })
 
         expect(response.error).toBeUndefined()
         expect(response.finished).toBe(false)
 
         const payload = parsePayload(response)
-        expect(payload.mapping).toEqual({
-            person: {},
-            company: {},
-        })
+        expect(payload.person).toEqual({})
+        expect(payload.company).toEqual({})
     })
 
     it.each(['$groupidentify', '$set', '$web_vitals'])('skips unsupported event type %s', async (eventName) => {
