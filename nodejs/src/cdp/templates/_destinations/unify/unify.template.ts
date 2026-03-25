@@ -55,7 +55,8 @@ if (res.status >= 400) {
             key: 'person_attributes',
             type: 'dictionary',
             label: 'Person',
-            description: 'Mapping of Unify Person attributes to PostHog person properties. Email is required.',
+            description:
+                'Mapping of Unify Person attributes to PostHog person properties. Email is required to associate an event with a Person.',
             default: {
                 email: '{person.properties.email}',
                 address: '{person.properties.address}',
@@ -80,7 +81,8 @@ if (res.status >= 400) {
             key: 'company_attributes',
             type: 'dictionary',
             label: 'Company',
-            description: 'Mapping of Unify Company attributes to PostHog company properties. Domain is required.',
+            description:
+                'Mapping of Unify Company attributes to PostHog company properties. Domain is required to associate an event with a Company.',
             default: {
                 domain: '{groups.company.properties.domain}',
                 address: '{groups.company.properties.address}',

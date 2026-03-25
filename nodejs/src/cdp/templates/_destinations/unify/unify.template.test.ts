@@ -31,8 +31,9 @@ describe('unify template', () => {
         return parseJSON((response.invocation.queueParameters as any).body)
     }
 
-    it('sends event, person, and resolved mapping payload', async () => {
-        const response = await tester.invoke(defaultInputs, {
+    it.each([
+        {
+            description: 'pageview with person email',
             event: {
                 uuid: 'event-uuid-001',
                 event: '$pageview',
@@ -40,9 +41,25 @@ describe('unify template', () => {
                 timestamp: '2024-01-01T00:00:00Z',
                 properties: { $current_url: 'https://example.com', plan: 'pro' },
             },
-            person: {
-                properties: { email: 'person@acme.com', role: 'admin' },
+            personProps: { email: 'person@acme.com', role: 'admin' },
+            expectedEmail: 'person@acme.com',
+        },
+        {
+            description: 'custom event with different person',
+            event: {
+                uuid: 'event-uuid-002',
+                event: 'Signed Up',
+                distinct_id: 'distinct-456',
+                timestamp: '2024-01-02T00:00:00Z',
+                properties: { plan: 'enterprise', referrer: 'ads' },
             },
+            personProps: { email: 'founder@acme.com', role: 'owner' },
+            expectedEmail: 'founder@acme.com',
+        },
+    ])('sends correct payload for $description', async ({ event, personProps, expectedEmail }) => {
+        const response = await tester.invoke(defaultInputs, {
+            event,
+            person: { properties: personProps },
         })
 
         expect(response.error).toBeUndefined()
@@ -57,53 +74,10 @@ describe('unify template', () => {
         })
 
         const payload = parsePayload(response)
-        expect(payload.type).toBe('$pageview')
-        expect(payload.data).toMatchObject({
-            uuid: 'event-uuid-001',
-            event: '$pageview',
-            distinct_id: 'distinct-123',
-            timestamp: '2024-01-01T00:00:00Z',
-            properties: { $current_url: 'https://example.com', plan: 'pro' },
-        })
+        expect(payload.type).toBe(event.event)
+        expect(payload.data).toMatchObject(event)
         expect(payload.person).toEqual({
-            email: 'person@acme.com',
-            first_name: null,
-            last_name: null,
-            title: null,
-            linkedin_url: null,
-        })
-        expect(payload.company).toEqual({
-            domain: null,
-            name: null,
-        })
-    })
-
-    it('sends event data and person object', async () => {
-        const response = await tester.invoke(defaultInputs, {
-            event: {
-                uuid: 'event-uuid-002',
-                event: 'Signed Up',
-                distinct_id: 'distinct-456',
-                timestamp: '2024-01-02T00:00:00Z',
-                properties: { plan: 'enterprise', referrer: 'ads' },
-            },
-            person: {
-                properties: { email: 'founder@acme.com', role: 'owner' },
-            },
-        })
-
-        expect(response.error).toBeUndefined()
-
-        const payload = parsePayload(response)
-        expect(payload.data).toMatchObject({
-            uuid: 'event-uuid-002',
-            event: 'Signed Up',
-            distinct_id: 'distinct-456',
-            timestamp: '2024-01-02T00:00:00Z',
-            properties: { plan: 'enterprise', referrer: 'ads' },
-        })
-        expect(payload.person).toEqual({
-            email: 'founder@acme.com',
+            email: expectedEmail,
             first_name: null,
             last_name: null,
             title: null,
@@ -208,5 +182,18 @@ describe('unify template', () => {
 
         expect(fetchResponse.finished).toBe(true)
         expect(fetchResponse.error).toMatch('Error from Unify API: 400')
+    })
+
+    it('completes successfully on 200 response', async () => {
+        const response = await tester.invoke(defaultInputs)
+        expect(response.finished).toBe(false)
+
+        const fetchResponse = await tester.invokeFetchResponse(response.invocation, {
+            status: 200,
+            body: {},
+        })
+
+        expect(fetchResponse.finished).toBe(true)
+        expect(fetchResponse.error).toBeUndefined()
     })
 })
