@@ -10,7 +10,7 @@ export const template: HogFunctionTemplate = {
     icon_url: '/static/services/unify.png',
     category: ['Analytics'],
     code_language: 'hog',
-    code: `\
+    code: `
 if (empty(inputs.write_key)) {
     throw Error('Unify write key is required.')
 }
