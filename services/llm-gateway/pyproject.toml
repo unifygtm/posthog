@@ -23,7 +23,7 @@ dependencies = [
     "httpx>=0.28.0",
     "posthoganalytics>=3.0.0",
     "cachetools>=5.5.0",
-    "python-multipart>=0.0.9",
+    "python-multipart>=0.0.26",
 ]
 
 [dependency-groups]
