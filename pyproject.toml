@@ -81,7 +81,7 @@ dependencies = [
     "langchain-openai~=0.3.35",
     "langchain-anthropic~=0.3.22",
     "langgraph==0.4.10",
-    "lxml==6.0.2",
+    "lxml==6.1.0",
     "lzstring==1.0.4",
     "markdown-it-py~=3.0.0",
     "mcp~=1.26.0",
