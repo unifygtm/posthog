@@ -39,7 +39,7 @@
         "@toon-format/toon": "^2.1.0",
         "agents": "^0.3.6",
         "ai": "^6.0.0",
-        "fflate": "^0.8.2",
+        "fflate": "^0.8.3",
         "posthog-js-lite": "4.2.2",
         "posthog-node": "^5.25.0",
         "uuid": "^11.1.0",
