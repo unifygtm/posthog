@@ -13,7 +13,7 @@
     "dependencies": {
         "@posthog/rrweb": "0.0.26",
         "@posthog/rrweb-types": "0.0.26",
-        "fflate": "^0.8.2",
+        "fflate": "^0.8.3",
         "hls.js": "^1.5.7"
     },
     "devDependencies": {
