@@ -123,7 +123,7 @@
         "@stripe/stripe-js": "^4.5.0",
         "@tailwindcss/cli": "4.0.11",
         "@testing-library/dom": ">=9.3.4",
-        "@tiptap/core": "^3.20.1",
+        "@tiptap/core": "^3.30.5",
         "@tiptap/extension-code-block-lowlight": "^3.20.1",
         "@tiptap/extension-color": "^3.20.1",
         "@tiptap/extension-document": "^3.20.1",
